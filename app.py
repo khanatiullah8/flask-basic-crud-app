@@ -12,10 +12,10 @@ def welcome():
             <p>Try these APIs:</p>
             <ul>
                 <li>/get-todo-all</li>
-                <li>/get-todo/&lt;id&gt;</li>
+                <li>/get-todo/&lt;todo_id&gt;</li>
                 <li>/create-todo (pass data using 'post' method)</li>
-                <li>/update-todo (pass data using 'put' method)</li>
-                <li>/delete-todo/&lt;id&gt;</li>
+                <li>/update-todo/&lt;todo_id&gt; (pass data using 'put' method)</li>
+                <li>/delete-todo/&lt;todo_id&gt;</li>
             </ul>
             """
 
@@ -28,13 +28,13 @@ def show_all():
     return jsonify(data)
 
 # get single todo
-@app.route("/get-todo/<int:id>")
-def show(id):
+@app.route("/get-todo/<int:todo_id>")
+def show(todo_id):
     if not data:
         return "your todo bucket is empty"
     
     for item in data:
-        if item.get("id") == id:
+        if item.get("id") == todo_id:
             return jsonify(item)
         
     return "ID mismatch"
@@ -49,15 +49,15 @@ def create_todo():
     return "todo created successfully"
 
 # update todo
-@app.route("/update-todo",methods=["PUT"])
-def update_todo():
+@app.route("/update-todo/<int:todo_id>",methods=["PUT"])
+def update_todo(todo_id):
     req_body = request.get_json()
     
     if not data:
         return "your todo bucket is empty to perform UPDATE operation"
     
     for item in data:
-        if item.get("id") == req_body.get("id"):
+        if item.get("id") == todo_id:
             if req_body.get("title"):
                 item["title"] = req_body["title"]
             if req_body.get("status"):
@@ -67,13 +67,13 @@ def update_todo():
     return "ID mismatch"
 
 # delete todo
-@app.route("/delete-todo/<int:id>",methods=["DELETE"])
-def delete_todo(id):
+@app.route("/delete-todo/<int:todo_id>",methods=["DELETE"])
+def delete_todo(todo_id):
     if not data:
         return "your todo bucket is empty to perform DELETE operation"
     
     for item in data:
-        if item.get("id") == id:
+        if item.get("id") == todo_id:
             data.remove(item)
             return "todo deleted successfully"
         
